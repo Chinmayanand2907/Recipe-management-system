@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ recipe.title }} - Recipe Detail{% endblock %}
+
+{% block content %}
+<div class="container py-4" data-aos="fade-up">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('index') }}" class="text-primary">Home</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('recipes') }}" class="text-primary">Recipes</a></li>
+            <li class="breadcrumb-item active text-secondary" aria-current="page">{{ recipe.title }}</li>
+        </ol>
+    </nav>
+
+    <div class="recipe-detail-header">
+        <div class="row">
+            <div class="col-lg-8">
+                {% if recipe.image_url %}
+                <img src="{{ url_for('static', filename=recipe.image_url) }}" alt="{{ recipe.title }}" class="recipe-detail-img">
+                {% else %}
+                <div class="recipe-detail-img d-flex align-items-center justify-content-center bg-dark bg-opacity-10">
+                    <i class="fas fa-utensils fa-4x text-primary"></i>
+                </div>
+                {% endif %}
+            </div>
+            <div class="col-lg-4 d-flex flex-column justify-content-center">
+                <div class="d-flex justify-content-start mb-3 flex-wrap gap-2">
+                    <span class="badge bg-primary bg-opacity-75">{{ recipe.category }}</span>
+                    <span class="badge bg-secondary bg-opacity-75">{{ recipe.difficulty }}</span>
+                </div>
+                <h1 class="mb-3 text-primary">{{ recipe.title }}</h1>
+                <p class="lead mb-4 text-secondary">{{ recipe.description }}</p>
+
+                <div class="recipe-meta">
+                    <div class="recipe-meta-item">
+                        <i class="fas fa-clock text-primary"></i>
+                        <span class="text-secondary">Prep: {{ recipe.prep_time }} mins</span>
+                    </div>
+                    <div class="recipe-meta-item">
+                        <i class="fas fa-fire text-primary"></i>
+                        <span class="text-secondary">Cook: {{ recipe.cook_time }} mins</span>
+                    </div>
+                    <div class="recipe-meta-item">
+                        <i class="fas fa-users text-primary"></i>
+                        <span class="text-secondary">Serves: {{ recipe.servings }}</span>
+                    </div>
+                    {% if recipe.created_at %}
+                    <div class="recipe-meta-item">
+                        <i class="fas fa-calendar-alt text-primary"></i>
+                        <span class="text-secondary">Added: {% if recipe.created_at %}{{ recipe.created_at|strftime('%b %d, %Y') }}{% else %}Unknown{% endif %}</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="d-flex gap-2 mt-3">
+                    <button class="btn btn-outline-primary" onclick="window.print()">
+                        <i class="fas fa-print me-2"></i> Print Recipe
+                    </button>
+                    <button class="btn btn-outline-secondary">
+                        <i class="fas fa-share-alt me-2"></i> Share
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+            <div class="recipe-detail-section">
+                <h3 class="text-primary"><i class="fas fa-list-ul me-2"></i> Ingredients</h3>
+                <ul class="ingredient-list text-secondary">
+                    {% if recipe.ingredients %}
+                        {% for ingredient in recipe.ingredients %}
+                        <li>
+                            {% if ingredient.quantity or ingredient.unit or ingredient.ingredient %}
+                                <!-- Format structured ingredient data -->
+                                {% if ingredient.quantity %}{{ ingredient.quantity }} {% endif %}
+                                {% if ingredient.unit_abbr %}{{ ingredient.unit_abbr }}{% elif ingredient.unit %}{{ ingredient.unit }}{% endif %} 
+                                {{ ingredient.ingredient }}
+                                {% if ingredient.notes and ingredient.notes.strip() %}
+                                    <span class="text-secondary opacity-75">({{ ingredient.notes.strip() }})</span>
+                                {% endif %}
+                            {% elif ingredient.notes and ingredient.notes.strip() %}
+                                <!-- Clean up the notes field -->
+                                {{ ingredient.notes.strip() }}
+                            {% else %}
+                                Unknown ingredient
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    {% else %}
+                        <li>No ingredients listed</li>
+                    {% endif %}
+                </ul>
+            </div>
+
+            <div class="recipe-detail-section mt-5">
+                <h3 class="text-primary"><i class="fas fa-info-circle me-2"></i> Nutrition Info</h3>
+                <div class="card border-0 shadow-sm bg-dark bg-opacity-10">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-secondary">Calories:</span>
+                            <span class="fw-bold text-primary">{{ recipe.calories if recipe.calories else 'N/A' }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-secondary">Protein:</span>
+                            <span class="fw-bold text-primary">{{ recipe.protein if recipe.protein else 'N/A' }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-secondary">Carbs:</span>
+                            <span class="fw-bold text-primary">{{ recipe.carbs if recipe.carbs else 'N/A' }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-secondary">Fat:</span>
+                            <span class="fw-bold text-primary">{{ recipe.fat if recipe.fat else 'N/A' }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8" data-aos="fade-up" data-aos-delay="200">
+            <div class="recipe-detail-section">
+                <h3 class="text-primary"><i class="fas fa-mortar-pestle me-2"></i> Instructions</h3>
+                <ol class="steps-list text-secondary">
+                    {% if recipe.steps %}
+                        {% for step in recipe.steps %}
+                        <li>{{ step.instruction }}</li>
+                        {% endfor %}
+                    {% else %}
+                        <li>No instructions provided</li>
+                    {% endif %}
+                </ol>
+            </div>
+
+            <div class="recipe-detail-section mt-5">
+                <h3 class="text-primary"><i class="fas fa-lightbulb me-2"></i> Tips & Notes</h3>
+                <div class="card border-0 shadow-sm bg-dark bg-opacity-10">
+                    <div class="card-body">
+                        {% if recipe.notes %}
+                        <p class="mb-0 text-secondary">{{ recipe.notes }}</p>
+                        {% else %}
+                        <p class="text-secondary opacity-75 mb-0">No additional notes for this recipe.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5 d-flex justify-content-between" data-aos="fade-up" data-aos-delay="300">
+        <a href="{{ url_for('add_recipe', recipe_id=recipe.recipe_id) }}" class="btn btn-primary">
+            <i class="fas fa-edit me-2"></i> Edit Recipe
+        </a>
+        
+        <form action="{{ url_for('delete_recipe', recipe_id=recipe.recipe_id) }}" method="post" onsubmit="return confirm('Are you sure you want to delete this recipe?');" class="d-inline">
+            <button type="submit" class="btn btn-outline-danger">
+                <i class="fas fa-trash-alt me-2"></i> Delete Recipe
+            </button>
+        </form>
+    </div>
+    
+    <!-- You Might Also Like Section -->
+    <section class="mt-5 pt-4" data-aos="fade-up" data-aos-delay="400">
+        <h3 class="section-title text-primary">You Might Also Like</h3>
+        <div class="row g-4">
+            {% for i in range(3) %}
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="{{ (i+1) * 100 }}">
+                <div class="card h-100 recipe-card bg-dark bg-opacity-10 border-0">
+                    <div class="card-img-top d-flex align-items-center justify-content-center bg-dark bg-opacity-20" style="height: 200px;">
+                        <i class="fas fa-utensils fa-3x text-primary"></i>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="badge bg-primary bg-opacity-75">Recommendation</span>
+                        </div>
+                        <h5 class="card-title text-primary">Suggested Recipe {{ i+1 }}</h5>
+                        <p class="card-text text-secondary">This is a recommended recipe based on your current selection.</p>
+                    </div>
+                    <div class="card-footer bg-transparent d-flex justify-content-end border-0">
+                        <a href="#" class="btn btn-sm btn-primary">
+                            View Recipe
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- This filter is needed for date formatting -->
+<script>
+    // Adding a custom date filter in JavaScript since we're not using Jinja2 extensions
+    document.addEventListener('DOMContentLoaded', function() {
+        // This is just a placeholder for the date formatting functionality
+        // In a real implementation, you would either:
+        // 1. Use a Jinja2 extension for date formatting
+        // 2. Format the date on the server before sending to the template
+    });
+</script>
+{% endblock %} 

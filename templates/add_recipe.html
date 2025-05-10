@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+
+{% block title %}Add New Recipe - RecipeHub{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('recipes') }}">Recipes</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Add New Recipe</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header bg-white">
+        <h1 class="h3 mb-0">Add New Recipe</h1>
+    </div>
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            
+            <div class="row">
+                <!-- Left Column -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        {{ form.title.label(class="form-label") }}
+                        {{ form.title(class="form-control") }}
+                        {% if form.title.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.title.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.description.label(class="form-label") }}
+                        {{ form.description(class="form-control", rows=4) }}
+                        {% if form.description.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.description.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            {{ form.prep_time.label(class="form-label") }}
+                            {{ form.prep_time(class="form-control") }}
+                            {% if form.prep_time.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.prep_time.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.cook_time.label(class="form-label") }}
+                            {{ form.cook_time(class="form-control") }}
+                            {% if form.cook_time.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.cook_time.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            {{ form.servings.label(class="form-label") }}
+                            {{ form.servings(class="form-control") }}
+                            {% if form.servings.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.servings.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.difficulty.label(class="form-label") }}
+                            {{ form.difficulty(class="form-select") }}
+                            {% if form.difficulty.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.difficulty.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.category_id.label(class="form-label") }}
+                        {{ form.category_id(class="form-select") }}
+                        {% if form.category_id.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.category_id.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.image.label(class="form-label") }}
+                        {{ form.image(class="form-control") }}
+                        {% if form.image.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.image.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">Optional. Supported formats: JPG, PNG, GIF.</div>
+                    </div>
+                </div>
+                
+                <!-- Right Column -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label">Ingredients</label>
+                        <div class="card mb-2">
+                            <div class="card-body p-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="me-2">
+                                        <i class="fas fa-info-circle" style="color: var(--primary-color);"></i>
+                                    </div>
+                                    <div class="small">
+                                        For each ingredient, specify the ingredient ID, quantity, unit ID, and optional notes.
+                                        <br>Format: <code>ID,Quantity,UnitID,Notes</code> (one per line)
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Ingredient</th>
+                                                <th>Unit ID</th>
+                                                <th>Unit</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for ingredient in ingredients %}
+                                            <tr>
+                                                <td>{{ ingredient['ingredient_id'] }}</td>
+                                                <td>{{ ingredient['name'] }}</td>
+                                                <td colspan="2"></td>
+                                            </tr>
+                                            {% endfor %}
+                                            <tr>
+                                                <td colspan="2"></td>
+                                                <td colspan="2"><strong>Available Units:</strong></td>
+                                            </tr>
+                                            {% for unit in units %}
+                                            <tr>
+                                                <td colspan="2"></td>
+                                                <td>{{ unit['unit_id'] }}</td>
+                                                <td>{{ unit['name'] }} ({{ unit['abbreviation'] }})</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {{ form.ingredients(class="form-control", rows=5) }}
+                        {% if form.ingredients.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.ingredients.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">Example: <code>2,2,7,Sifted</code> for 2 cups of flour, sifted</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.instructions.label(class="form-label") }}
+                        {{ form.instructions(class="form-control", rows=8) }}
+                        {% if form.instructions.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.instructions.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">Enter each step on a new line.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-between mt-4">
+                <a href="{{ url_for('recipes') }}" class="btn btn-outline-secondary">Cancel</a>
+                {{ form.submit(class="btn", style="background-color: var(--primary-color); color: white;") }}
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %} 

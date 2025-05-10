@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Ingredient - DeliciousBytes{% endblock %}
+
+{% block content %}
+<div class="container py-4" data-aos="fade-up">
+  <div class="mb-4">
+      <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="{{ url_for('index') }}" class="text-primary">Home</a></li>
+              <li class="breadcrumb-item"><a href="{{ url_for('ingredients') }}" class="text-primary">Ingredients</a></li>
+              <li class="breadcrumb-item active text-secondary" aria-current="page">Add Ingredient</li>
+          </ol>
+      </nav>
+  </div>
+
+  <div class="row justify-content-center">
+      <div class="col-md-8">
+          <div class="card shadow-sm border-0 bg-dark bg-opacity-10">
+              <div class="card-header bg-dark bg-opacity-20 border-0">
+                  <h1 class="h3 mb-0 text-primary">Add New Ingredient</h1>
+              </div>
+              <div class="card-body">
+                  <form method="post">
+                      {{ form.hidden_tag() }}
+                      
+                      <div class="mb-3">
+                          {{ form.name.label(class="form-label text-secondary") }}
+                          {{ form.name(class="form-control bg-dark bg-opacity-10 border-0 text-secondary") }}
+                          {% if form.name.errors %}
+                              <div class="invalid-feedback d-block text-danger">
+                                  {% for error in form.name.errors %}
+                                      {{ error }}
+                                  {% endfor %}
+                              </div>
+                          {% endif %}
+                      </div>
+                      
+                      <div class="mb-3">
+                          {{ form.description.label(class="form-label text-secondary") }}
+                          {{ form.description(class="form-control bg-dark bg-opacity-10 border-0 text-secondary", rows=3) }}
+                          {% if form.description.errors %}
+                              <div class="invalid-feedback d-block text-danger">
+                                  {% for error in form.description.errors %}
+                                      {{ error }}
+                                  {% endfor %}
+                              </div>
+                          {% endif %}
+                      </div>
+                      
+                      <div class="mb-3">
+                          <div class="form-check">
+                              {{ form.is_allergen(class="form-check-input") }}
+                              {{ form.is_allergen.label(class="form-check-label text-secondary") }}
+                          </div>
+                          <div class="form-text text-secondary opacity-75">Check this if the ingredient is a common allergen (e.g., nuts, gluten, dairy).</div>
+                      </div>
+                      
+                      <div class="d-flex justify-content-between mt-4">
+                          <a href="{{ url_for('ingredients') }}" class="btn btn-outline-secondary">Cancel</a>
+                          {{ form.submit(class="btn btn-primary") }}
+                      </div>
+                  </form>
+              </div>
+          </div>
+      </div>
+      
+      <!-- Helpful Information Sidebar -->
+      <div class="col-md-4 mt-4 mt-md-0" data-aos="fade-up" data-aos-delay="200">
+          <div class="card border-0 bg-dark bg-opacity-10 h-100">
+              <div class="card-body">
+                  <h5 class="text-primary mb-3">Adding Ingredients</h5>
+                  <p class="text-secondary mb-3">When adding ingredients to the database, consider the following tips:</p>
+                  
+                  <div class="mb-3">
+                      <div class="d-flex">
+                          <div class="flex-shrink-0 me-2">
+                              <i class="fas fa-check-circle text-primary"></i>
+                          </div>
+                          <div class="text-secondary small">Use clear, specific names that are easy to search.</div>
+                      </div>
+                  </div>
+                  
+                  <div class="mb-3">
+                      <div class="d-flex">
+                          <div class="flex-shrink-0 me-2">
+                              <i class="fas fa-check-circle text-primary"></i>
+                          </div>
+                          <div class="text-secondary small">Include helpful descriptions to distinguish similar ingredients.</div>
+                      </div>
+                  </div>
+                  
+                  <div class="mb-3">
+                      <div class="d-flex">
+                          <div class="flex-shrink-0 me-2">
+                              <i class="fas fa-check-circle text-primary"></i>
+                          </div>
+                          <div class="text-secondary small">Mark allergens properly to help users with food sensitivities.</div>
+                      </div>
+                  </div>
+                  
+                  <hr class="border-secondary opacity-25 my-4">
+                  
+                  <p class="text-secondary small mb-0">Your contributions help make our recipe database more comprehensive and useful for everyone.</p>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+{% endblock %} 

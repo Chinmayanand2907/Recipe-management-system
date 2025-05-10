@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block title %}Ingredients - DeliciousBytes{% endblock %}
+
+{% block content %}
+<div class="container py-4" data-aos="fade-up">
+  <div class="mb-4">
+      <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="{{ url_for('index') }}" class="text-primary">Home</a></li>
+              <li class="breadcrumb-item active text-secondary" aria-current="page">Ingredients</li>
+          </ol>
+      </nav>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="mb-0 text-primary">Ingredients</h1>
+      <a href="{{ url_for('add_ingredient') }}" class="btn btn-primary">
+          <i class="fas fa-plus me-1"></i> Add Ingredient
+      </a>
+  </div>
+
+  <div class="card shadow-sm border-0 bg-dark bg-opacity-10">
+      <div class="card-body">
+          <div class="table-responsive">
+              <table class="table table-hover">
+                  <thead>
+                      <tr class="text-primary">
+                          <th>ID</th>
+                          <th>Name</th>
+                          <th>Description</th>
+                          <th>Allergen</th>
+                          <th>Actions</th>
+                      </tr>
+                  </thead>
+                  <tbody class="text-secondary">
+                      {% for ingredient in ingredients %}
+                      <tr>
+                          <td>{{ ingredient['ingredient_id'] }}</td>
+                          <td class="fw-medium text-primary">{{ ingredient['name'] }}</td>
+                          <td>{{ ingredient['description'] if ingredient['description'] else 'No description' }}</td>
+                          <td>
+                              {% if ingredient['allergen'] %}
+                              <span class="badge bg-danger bg-opacity-75">
+                                  <i class="fas fa-exclamation-triangle me-1"></i> Yes
+                              </span>
+                              {% else %}
+                              <span class="badge bg-success bg-opacity-75">No</span>
+                              {% endif %}
+                          </td>
+                          <td>
+                              <div class="btn-group btn-group-sm">
+                                  <a href="#" class="btn btn-outline-primary">
+                                      <i class="fas fa-edit"></i>
+                                  </a>
+                                  <button type="button" class="btn btn-outline-danger">
+                                      <i class="fas fa-trash"></i>
+                                  </button>
+                              </div>
+                          </td>
+                      </tr>
+                      {% endfor %}
+                  </tbody>
+              </table>
+          </div>
+      </div>
+  </div>
+  
+  <!-- Ingredient Categories Section -->
+  <section class="mt-5 pt-3" data-aos="fade-up" data-aos-delay="200">
+      <h3 class="section-title text-primary mb-4">Ingredient Categories</h3>
+      <div class="row g-4">
+          <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+              <div class="card h-100 border-0 bg-dark bg-opacity-10">
+                  <div class="card-body p-4">
+                      <div class="d-flex align-items-center mb-3">
+                          <div class="rounded-circle bg-primary bg-opacity-10 p-3 me-3">
+                              <i class="fas fa-leaf fa-lg text-primary"></i>
+                          </div>
+                          <h5 class="card-title mb-0 text-primary">Fruits & Vegetables</h5>
+                      </div>
+                      <p class="card-text text-secondary">Fresh produce including all types of fruits and vegetables.</p>
+                  </div>
+              </div>
+          </div>
+          <div class="col-md-4" data-aos="fade-up" data-aos-delay="150">
+              <div class="card h-100 border-0 bg-dark bg-opacity-10">
+                  <div class="card-body p-4">
+                      <div class="d-flex align-items-center mb-3">
+                          <div class="rounded-circle bg-primary bg-opacity-10 p-3 me-3">
+                              <i class="fas fa-drumstick-bite fa-lg text-primary"></i>
+                          </div>
+                          <h5 class="card-title mb-0 text-primary">Meats & Proteins</h5>
+                      </div>
+                      <p class="card-text text-secondary">Beef, chicken, fish, and plant-based protein alternatives.</p>
+                  </div>
+              </div>
+          </div>
+          <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+              <div class="card h-100 border-0 bg-dark bg-opacity-10">
+                  <div class="card-body p-4">
+                      <div class="d-flex align-items-center mb-3">
+                          <div class="rounded-circle bg-primary bg-opacity-10 p-3 me-3">
+                              <i class="fas fa-wheat-awn fa-lg text-primary"></i>
+                          </div>
+                          <h5 class="card-title mb-0 text-primary">Grains & Flours</h5>
+                      </div>
+                      <p class="card-text text-secondary">Various types of flours, grains, and baking ingredients.</p>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </section>
+</div>
+{% endblock %} 

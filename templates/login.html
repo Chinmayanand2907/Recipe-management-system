@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Recipe Management System{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card bg-dark shadow-lg" data-aos="fade-up">
+                <div class="card-header bg-dark text-center p-4 border-bottom border-secondary">
+                    <h2 class="mb-0">Sign In</h2>
+                    <p class="text-muted mb-0">Access your recipe collection</p>
+                </div>
+                <div class="card-body p-4">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    
+                    <form method="POST" action="{{ url_for('login') }}">
+                        {{ form.hidden_tag() }}
+                        <div class="mb-4">
+                            <label for="{{ form.username.id }}" class="form-label">{{ form.username.label }}</label>
+                            {{ form.username(class="form-control bg-dark text-light border-secondary", placeholder="Enter your username") }}
+                            {% if form.username.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.username.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="{{ form.password.id }}" class="form-label">{{ form.password.label }}</label>
+                            {{ form.password(class="form-control bg-dark text-light border-secondary", placeholder="Enter your password") }}
+                            {% if form.password.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.password.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-4 form-check">
+                            {{ form.remember(class="form-check-input") }}
+                            <label class="form-check-label" for="{{ form.remember.id }}">{{ form.remember.label }}</label>
+                        </div>
+                        
+                        <div class="d-grid">
+                            {{ form.submit(class="btn btn-primary btn-lg") }}
+                        </div>
+                        
+                        <div class="text-center mt-3">
+                            <p class="mb-0">Don't have an account? <a href="{{ url_for('register') }}" class="text-primary">Sign up here</a></p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

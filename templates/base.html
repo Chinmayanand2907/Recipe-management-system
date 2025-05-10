@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Recipe Management System{% endblock %}</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #7C3AED;
+            --primary-light: #A78BFA;
+            --primary-dark: #5B21B6;
+            --secondary-color: #10B981;
+            --secondary-light: #6EE7B7;
+            --secondary-dark: #059669;
+            --dark-color: #0F172A;
+            --dark-surface: #1E293B;
+            --dark-card: #334155;
+            --dark-elevated: #475569;
+            --light-color: #F8FAFC;
+            --warning-color: #F59E0B;
+            --danger-color: #EF4444;
+            --info-color: #3B82F6;
+            --gray-light: #334155;
+            --gray-medium: #475569;
+            --text-primary: #F1F5F9;
+            --text-secondary: #CBD5E1;
+            --text-muted: #94A3B8;
+            --border-color: #475569;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--dark-color);
+            background-image: linear-gradient(to bottom right, var(--dark-color), #1F2937);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        /* Navbar */
+        .navbar {
+            background-color: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            padding: 0.8rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.6rem;
+            color: var(--primary-light) !important;
+            letter-spacing: 0.5px;
+        }
+        
+        .nav-link {
+            color: var(--text-primary) !important;
+            font-weight: 500;
+            margin: 0 0.5rem;
+            padding: 0.5rem 0.8rem !important;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary-light) !important;
+            background-color: rgba(124, 58, 237, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        /* Cards */
+        .recipe-card {
+            transition: all 0.3s ease;
+            height: 100%;
+            border: none;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            background-color: var(--dark-card);
+            position: relative;
+        }
+        
+        .recipe-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom right, rgba(124, 58, 237, 0.05), rgba(16, 185, 129, 0.05));
+            z-index: 0;
+        }
+        
+        .recipe-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .card-img-top {
+            height: 220px;
+            object-fit: cover;
+            transition: all 0.5s ease;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .recipe-card:hover .card-img-top {
+            transform: scale(1.05);
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+            background-color: var(--dark-card);
+            position: relative;
+            z-index: 1;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .card-title {
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+        
+        .badge-category {
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+            padding: 0.5rem 0.8rem;
+            font-weight: 500;
+            border-radius: 50px;
+        }
+        
+        .badge-difficulty-Easy {
+            background-color: var(--secondary-light);
+            color: var(--dark-color);
+            padding: 0.5rem 0.8rem;
+            font-weight: 500;
+            border-radius: 50px;
+        }
+        
+        .badge-difficulty-Medium {
+            background-color: var(--warning-color);
+            color: var(--dark-color);
+            padding: 0.5rem 0.8rem;
+            font-weight: 500;
+            border-radius: 50px;
+        }
+        
+        .badge-difficulty-Hard {
+            background-color: var(--danger-color);
+            color: var(--dark-color);
+            padding: 0.5rem 0.8rem;
+            font-weight: 500;
+            border-radius: 50px;
+        }
+        
+        .card-footer {
+            background-color: var(--dark-card);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 1rem 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 0.6rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border: none;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary-dark), var(--primary-color));
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(45deg, var(--primary-color), var(--primary-light));
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(45deg, var(--secondary-dark), var(--secondary-color));
+            border: none;
+        }
+        
+        .btn-secondary:hover {
+            background: linear-gradient(45deg, var(--secondary-color), var(--secondary-light));
+        }
+        
+        .btn-outline-primary {
+            color: var(--primary-light);
+            border: 1px solid var(--primary-light);
+            background: transparent;
+        }
+        
+        .btn-outline-primary:hover {
+            background: linear-gradient(45deg, var(--primary-dark), var(--primary-color));
+            color: white;
+            border-color: transparent;
+        }
+        
+        .btn-sm {
+            padding: 0.4rem 1.2rem;
+            font-size: 0.875rem;
+            border-radius: 8px;
+        }
+        
+        /* Footer */
+        .footer {
+            background-color: var(--dark-surface);
+            color: var(--text-primary);
+            padding: 3rem 0 1.5rem;
+            margin-top: 5rem;
+            position: relative;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .footer h5 {
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--primary-light);
+        }
+        
+        .footer a {
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.7rem;
+        }
+        
+        .footer a:hover {
+            color: var(--primary-light);
+            transform: translateX(5px);
+        }
+        
+        /* Recipe Detail Page */
+        .recipe-detail-img {
+            max-height: 450px;
+            object-fit: cover;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .recipe-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .recipe-meta-item {
+            text-align: center;
+            padding: 1.2rem;
+            background-color: var(--dark-card);
+            border-radius: 16px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            flex: 1;
+            min-width: 100px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .recipe-meta-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border-color: rgba(124, 58, 237, 0.3);
+        }
+        
+        .recipe-meta-item i {
+            font-size: 1.5rem;
+            color: var(--primary-light);
+            margin-bottom: 0.5rem;
+        }
+        
+        .steps-list {
+            counter-reset: step-counter;
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .step-item {
+            position: relative;
+            padding: 1.5rem 1.5rem 1.5rem 3.5rem;
+            margin-bottom: 1.2rem;
+            background-color: var(--dark-card);
+            border-radius: 16px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .step-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            border-color: rgba(124, 58, 237, 0.3);
+        }
+        
+        .step-item:before {
+            content: counter(step-counter);
+            counter-increment: step-counter;
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(45deg, var(--primary-color), var(--primary-light));
+            color: white;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Search Form */
+        .search-form .form-control {
+            border-radius: 12px 0 0 12px;
+            padding: 0.6rem 1.2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            background-color: rgba(71, 85, 105, 0.6);
+            color: var(--text-primary);
+            backdrop-filter: blur(4px);
+        }
+        
+        .search-form .form-control:focus {
+            box-shadow: 0 0 0 0.25rem rgba(124, 58, 237, 0.25);
+            border-color: var(--primary-color);
+        }
+        
+        .search-form .btn {
+            border-radius: 0 12px 12px 0;
+            background-color: rgba(71, 85, 105, 0.6);
+            color: var(--primary-light);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-left: none;
+            padding-left: 1.2rem;
+            padding-right: 1.2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(4px);
+        }
+        
+        .search-form .btn:hover {
+            background: linear-gradient(45deg, var(--primary-dark), var(--primary-color));
+            color: white;
+        }
+        
+        /* Section Styling */
+        .section-title {
+            position: relative;
+            margin-bottom: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: inline-block;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -10px;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        }
+        
+        /* Hero Section */
+        .hero-section {
+            background-color: var(--dark-card);
+            background-image: linear-gradient(135deg, var(--dark-card), rgba(30, 41, 59, 0.7));
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, var(--primary-color) 0%, transparent 70%);
+            opacity: 0.1;
+            transform: translate(30%, -30%);
+            border-radius: 50%;
+        }
+        
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, var(--secondary-color) 0%, transparent 70%);
+            opacity: 0.1;
+            transform: translate(-30%, 30%);
+            border-radius: 50%;
+        }
+        
+        /* Category Cards */
+        .category-card {
+            text-align: center;
+            padding: 2rem;
+            background-color: var(--dark-card);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .category-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            border-color: rgba(124, 58, 237, 0.3);
+        }
+        
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .category-card:hover::before {
+            opacity: 1;
+        }
+        
+        .category-icon {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(45deg, rgba(124, 58, 237, 0.1), rgba(16, 185, 129, 0.1));
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .category-icon i {
+            font-size: 2rem;
+            color: var(--primary-light);
+            transition: all 0.3s ease;
+        }
+        
+        .category-card:hover .category-icon {
+            transform: scale(1.1);
+            background: linear-gradient(45deg, rgba(124, 58, 237, 0.2), rgba(16, 185, 129, 0.2));
+        }
+        
+        .category-card:hover .category-icon i {
+            color: var(--primary-light);
+        }
+        
+        /* Form Styling */
+        .form-control, .form-select {
+            padding: 0.8rem 1.2rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: rgba(51, 65, 85, 0.8);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(124, 58, 237, 0.25);
+            background-color: rgba(51, 65, 85, 0.9);
+            color: var(--text-primary);
+        }
+        
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+        
+        .card-header {
+            background-color: var(--dark-card);
+            border-bottom: none;
+            padding: 1.5rem;
+        }
+        
+        .card-header h1, .card-header h2, .card-header h3 {
+            margin-bottom: 0;
+        }
+        
+        /* Breadcrumb */
+        .breadcrumb {
+            padding: 0.8rem 1.2rem;
+            background-color: var(--dark-card);
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .breadcrumb-item {
+            color: var(--text-secondary);
+        }
+        
+        .breadcrumb-item a {
+            color: var(--primary-light);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .breadcrumb-item a:hover {
+            color: var(--primary-light);
+            text-decoration: underline;
+        }
+        
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Glass morphism elements */
+        .glass {
+            background: rgba(51, 65, 85, 0.5);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Text Colors */
+        .text-muted {
+            color: var(--text-muted) !important;
+        }
+        
+        /* Input placeholders */
+        ::placeholder {
+            color: var(--text-muted);
+            opacity: 0.7;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--dark-surface);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--gray-medium);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 2rem;
+            }
+            
+            .recipe-meta-item {
+                min-width: 45%;
+            }
+            
+            .card-img-top {
+                height: 180px;
+            }
+        }
+        
+        /* Background elements */
+        .bg-gradient {
+            background: linear-gradient(135deg, var(--primary-dark), var(--secondary-dark));
+        }
+        
+        .bg-dark {
+            background-color: var(--dark-surface) !important;
+        }
+        
+        .bg-white {
+            background-color: var(--dark-card) !important;
+        }
+        
+        /* Alert styling */
+        .alert {
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .alert-success {
+            background-color: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--secondary-color);
+            color: var(--secondary-light);
+        }
+        
+        .alert-danger {
+            background-color: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--danger-color);
+            color: var(--danger-color);
+        }
+        
+        .alert-warning {
+            background-color: rgba(245, 158, 11, 0.1);
+            border: 1px solid var(--warning-color);
+            color: var(--warning-color);
+        }
+        
+        .alert-info {
+            background-color: rgba(59, 130, 246, 0.1);
+            border: 1px solid var(--info-color);
+            color: var(--info-color);
+        }
+        
+        /* Loading animation */
+        .loading {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(124, 58, 237, 0.1) 50%, 
+                transparent 100%);
+            animation: loading 1.5s infinite;
+        }
+        
+        @keyframes loading {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(0%); }
+        }
+    </style>
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <i class="fas fa-utensils me-2"></i>Recipe Hub
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('recipes') }}">Recipes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('ingredients') }}">Ingredients</a>
+                    </li>
+                    {% if user %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('add_recipe') }}">Add Recipe</a>
+                    </li>
+                    {% endif %}
+                </ul>
+                
+                {% if search_form %}
+                <form class="d-flex me-3" method="GET" action="{{ url_for('search') }}">
+                    <div class="input-group">
+                        {{ search_form.query(class="form-control bg-dark text-light border-secondary", placeholder="Search recipes...") }}
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </form>
+                {% endif %}
+                
+                <div class="navbar-nav">
+                    {% if user %}
+                    <div class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" 
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle me-1"></i> {{ user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end bg-dark" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item text-light" href="{{ url_for('logout') }}">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a></li>
+                        </ul>
+                    </div>
+                    {% else %}
+                    <a href="{{ url_for('login') }}" class="btn btn-outline-primary me-2">
+                        <i class="fas fa-sign-in-alt me-1"></i> Login
+                    </a>
+                    <a href="{{ url_for('register') }}" class="btn btn-primary">
+                        <i class="fas fa-user-plus me-1"></i> Sign Up
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    <div class="container mt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show rounded-pill" role="alert">
+                        {% if category == 'success' %}
+                            <i class="fas fa-check-circle me-2"></i>
+                        {% elif category == 'danger' %}
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                        {% elif category == 'info' %}
+                            <i class="fas fa-info-circle me-2"></i>
+                        {% elif category == 'warning' %}
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                        {% endif %}
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Main Content -->
+    <main class="container py-4">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <h5><i class="fas fa-utensils me-2"></i>DeliciousBytes</h5>
+                    <p class="mb-3">Your ultimate recipe management system for storing, searching, and sharing your favorite recipes.</p>
+                    <div class="d-flex gap-3 mb-3">
+                        <a href="#" class="text-white fs-5"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-white fs-5"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white fs-5"><i class="fab fa-pinterest"></i></a>
+                        <a href="#" class="text-white fs-5"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ url_for('index') }}"><i class="fas fa-chevron-right me-2"></i>Home</a></li>
+                        <li><a href="{{ url_for('recipes') }}"><i class="fas fa-chevron-right me-2"></i>Recipes</a></li>
+                        <li><a href="{{ url_for('ingredients') }}"><i class="fas fa-chevron-right me-2"></i>Ingredients</a></li>
+                        <li><a href="{{ url_for('add_recipe') }}"><i class="fas fa-chevron-right me-2"></i>Add Recipe</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5>Recipe Categories</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ url_for('recipes', category=1) }}"><i class="fas fa-chevron-right me-2"></i>Breakfast</a></li>
+                        <li><a href="{{ url_for('recipes', category=2) }}"><i class="fas fa-chevron-right me-2"></i>Lunch</a></li>
+                        <li><a href="{{ url_for('recipes', category=3) }}"><i class="fas fa-chevron-right me-2"></i>Dinner</a></li>
+                        <li><a href="{{ url_for('recipes', category=4) }}"><i class="fas fa-chevron-right me-2"></i>Dessert</a></li>
+                        <li><a href="{{ url_for('recipes', category=5) }}"><i class="fas fa-chevron-right me-2"></i>Vegetarian</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5>Subscribe to Newsletter</h5>
+                    <p>Get the latest recipes straight to your inbox!</p>
+                    <div class="input-group mb-3">
+                        <input type="email" class="form-control" placeholder="Your email" aria-label="Your email">
+                        <button class="btn btn-primary" type="button">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+            <hr class="mt-4 mb-3" style="border-color: rgba(255,255,255,0.2);">
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                <p class="mb-0">&copy; {{ now.year }} DeliciousBytes - Food Recipe Management System</p>
+                <div>
+                    <a href="#" class="text-white mx-2">Privacy Policy</a>
+                    <a href="#" class="text-white mx-2">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- AOS Animation Library -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize AOS
+            AOS.init({
+                duration: 800,
+                once: true
+            });
+            
+            // Add active class to current navigation item
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+            
+            navLinks.forEach(link => {
+                const href = link.getAttribute('href');
+                if (href === currentPath || (href !== '/' && currentPath.startsWith(href))) {
+                    link.classList.add('active');
+                    link.style.backgroundColor = 'var(--primary-dark)';
+                }
+            });
+        });
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html> 

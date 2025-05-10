@@ -1,0 +1,291 @@
+{% extends 'base.html' %}
+
+{% block title %}DeliciousBytes - Recipe Management System{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section mb-5" data-aos="fade-up">
+    <div class="row align-items-center">
+        <div class="col-lg-7 pe-lg-5">
+            <h1 class="display-4 fw-bold mb-4">Discover & Share <span style="color: var(--primary-color);">Delicious</span> Recipes</h1>
+            <p class="lead mb-4">Your ultimate recipe management system for storing, searching, and sharing your favorite culinary creations with the world.</p>
+            <div class="d-flex flex-wrap gap-3 mb-4">
+                <a href="{{ url_for('recipes') }}" class="btn btn-lg px-4 btn-primary">
+                    <i class="fas fa-search me-2"></i> Explore Recipes
+                </a>
+                <a href="{{ url_for('add_recipe') }}" class="btn btn-lg btn-outline-primary px-4">
+                    <i class="fas fa-plus-circle me-2"></i> Add Your Recipe
+                </a>
+            </div>
+            <div class="d-flex align-items-center mt-4">
+                <div class="d-flex me-4">
+                    <div class="rounded-circle overflow-hidden" style="width: 40px; height: 40px; background-color: var(--gray-medium);">
+                        <i class="fas fa-user fs-5 text-center d-flex align-items-center justify-content-center h-100"></i>
+                    </div>
+                    <div class="rounded-circle overflow-hidden ms-n2" style="width: 40px; height: 40px; background-color: var(--gray-medium);">
+                        <i class="fas fa-user fs-5 text-center d-flex align-items-center justify-content-center h-100"></i>
+                    </div>
+                    <div class="rounded-circle overflow-hidden ms-n2" style="width: 40px; height: 40px; background-color: var(--gray-medium);">
+                        <i class="fas fa-user fs-5 text-center d-flex align-items-center justify-content-center h-100"></i>
+                    </div>
+                </div>
+                <div>
+                    <p class="mb-0 small">Joined by <strong>500+</strong> food lovers</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5 mt-5 mt-lg-0">
+            <div class="position-relative">
+                <div class="position-absolute" style="top: -20px; right: -20px; z-index: 1;">
+                    <div class="rounded-circle bg-warning d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                        <div class="text-center">
+                            <div class="fw-bold">100%</div>
+                            <div class="small">Tasty</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="img-container rounded-3 overflow-hidden shadow-lg" style="height: 400px;">
+                    <img src="https://images.unsplash.com/photo-1499028344343-cd173ffc68a9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1740&q=80" class="w-100 h-100 object-fit-cover" alt="Delicious food">
+                </div>
+                <div class="position-absolute" style="bottom: -20px; left: -20px; z-index: 1;">
+                    <div class="rounded-circle bg-white d-flex align-items-center justify-content-center" style="width: 90px; height: 90px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                        <i class="fas fa-utensils fa-2x" style="color: var(--primary-color);"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="mt-5 mb-5" data-aos="fade-up" data-aos-delay="100">
+    <div class="row g-4 text-center">
+        <div class="col-md-3 col-6">
+            <div class="p-4 rounded-3 glass">
+                <div class="display-5 fw-bold mb-2" style="color: var(--primary-light);">{{ latest_recipes|length }}</div>
+                <p class="mb-0 text-muted">Recipes</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="p-4 rounded-3 glass">
+                <div class="display-5 fw-bold mb-2" style="color: var(--secondary-light);">{{ categories|length }}</div>
+                <p class="mb-0 text-muted">Categories</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="p-4 rounded-3 glass">
+                <div class="display-5 fw-bold mb-2" style="color: var(--warning-color);">15+</div>
+                <p class="mb-0 text-muted">Cooking Styles</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="p-4 rounded-3 glass">
+                <div class="display-5 fw-bold mb-2" style="color: var(--info-color);">24/7</div>
+                <p class="mb-0 text-muted">Support</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="mt-5 pt-3" data-aos="fade-up" data-aos-delay="200">
+    <h2 class="section-title mb-4">Recipe Categories</h2>
+    <div class="row g-4">
+        {% for category in categories %}
+        <div class="col-md-4 col-lg-3">
+            <a href="{{ url_for('recipes', category=category['category_id']) }}" class="text-decoration-none">
+                <div class="category-card">
+                    <div class="category-icon">
+                        {% if category['name'] == 'Breakfast' %}
+                            <i class="fas fa-coffee"></i>
+                        {% elif category['name'] == 'Lunch' %}
+                            <i class="fas fa-hamburger"></i>
+                        {% elif category['name'] == 'Dinner' %}
+                            <i class="fas fa-utensils"></i>
+                        {% elif category['name'] == 'Dessert' %}
+                            <i class="fas fa-birthday-cake"></i>
+                        {% elif category['name'] == 'Vegetarian' %}
+                            <i class="fas fa-carrot"></i>
+                        {% elif category['name'] == 'Vegan' %}
+                            <i class="fas fa-seedling"></i>
+                        {% else %}
+                            <i class="fas fa-pizza-slice"></i>
+                        {% endif %}
+                    </div>
+                    <h5 class="mb-2">{{ category['name'] }}</h5>
+                    <p class="text-muted small mb-0">{{ category['description'] }}</p>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Latest Recipes Section -->
+<section class="mt-5 pt-4" data-aos="fade-up" data-aos-delay="300">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="section-title mb-0">Latest Recipes</h2>
+        <a href="{{ url_for('recipes') }}" class="btn btn-sm btn-outline-primary">
+            View All <i class="fas fa-arrow-right ms-1"></i>
+        </a>
+    </div>
+    <div class="row g-4">
+        {% for recipe in latest_recipes %}
+        <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ loop.index * 100 }}">
+            <div class="card h-100 recipe-card">
+                {% if recipe['image_url'] %}
+                <img src="{{ url_for('static', filename=recipe['image_url']) }}" class="card-img-top" alt="{{ recipe['title'] }}">
+                {% else %}
+                <div class="card-img-top d-flex align-items-center justify-content-center bg-light">
+                    <i class="fas fa-utensils fa-3x text-muted"></i>
+                </div>
+                {% endif %}
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="badge badge-category">{{ recipe['category'] }}</span>
+                        <span class="badge badge-difficulty-{{ recipe['difficulty'] }}">{{ recipe['difficulty'] }}</span>
+                    </div>
+                    <h5 class="card-title">{{ recipe['title'] }}</h5>
+                    <p class="card-text text-muted">{{ recipe['description']|truncate(100) }}</p>
+                </div>
+                <div class="card-footer bg-transparent d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <i class="far fa-clock me-1 text-muted"></i>
+                        <span class="text-muted small">{{ recipe['prep_time'] + recipe['cook_time'] }} mins</span>
+                    </div>
+                    <a href="{{ url_for('recipe_detail', recipe_id=recipe['recipe_id']) }}" class="btn btn-sm btn-primary">
+                        View Recipe
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Recipe of the Week Section -->
+<section class="bg-dark py-5 mt-5" data-aos="fade-up" data-aos-delay="300">
+    <div class="container">
+        <h2 class="section-title text-center mb-5 text-white">Recipe of the Week</h2>
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card h-100 recipe-card">
+                    {% if latest_recipes[0]['image_url'] %}
+                    <img src="{{ url_for('static', filename=latest_recipes[0]['image_url']) }}" class="card-img-top" alt="{{ latest_recipes[0]['title'] }}">
+                    {% else %}
+                    <div class="card-img-top d-flex align-items-center justify-content-center bg-light">
+                        <i class="fas fa-utensils fa-3x text-muted"></i>
+                    </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="badge badge-category">{{ latest_recipes[0]['category'] }}</span>
+                            <span class="badge badge-difficulty-{{ latest_recipes[0]['difficulty'] }}">{{ latest_recipes[0]['difficulty'] }}</span>
+                        </div>
+                        <h5 class="card-title">{{ latest_recipes[0]['title'] }}</h5>
+                        <p class="card-text text-muted">{{ latest_recipes[0]['description']|truncate(100) }}</p>
+                    </div>
+                    <div class="card-footer bg-transparent d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <i class="far fa-clock me-1 text-muted"></i>
+                            <span class="text-muted small">{{ latest_recipes[0]['prep_time'] + latest_recipes[0]['cook_time'] }} mins</span>
+                        </div>
+                        <a href="{{ url_for('recipe_detail', recipe_id=latest_recipes[0]['recipe_id']) }}" class="btn btn-sm btn-primary">
+                            View Recipe
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100 recipe-card">
+                    {% if latest_recipes[1]['image_url'] %}
+                    <img src="{{ url_for('static', filename=latest_recipes[1]['image_url']) }}" class="card-img-top" alt="{{ latest_recipes[1]['title'] }}">
+                    {% else %}
+                    <div class="card-img-top d-flex align-items-center justify-content-center bg-light">
+                        <i class="fas fa-utensils fa-3x text-muted"></i>
+                    </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="badge badge-category">{{ latest_recipes[1]['category'] }}</span>
+                            <span class="badge badge-difficulty-{{ latest_recipes[1]['difficulty'] }}">{{ latest_recipes[1]['difficulty'] }}</span>
+                        </div>
+                        <h5 class="card-title">{{ latest_recipes[1]['title'] }}</h5>
+                        <p class="card-text text-muted">{{ latest_recipes[1]['description']|truncate(100) }}</p>
+                    </div>
+                    <div class="card-footer bg-transparent d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <i class="far fa-clock me-1 text-muted"></i>
+                            <span class="text-muted small">{{ latest_recipes[1]['prep_time'] + latest_recipes[1]['cook_time'] }} mins</span>
+                        </div>
+                        <a href="{{ url_for('recipe_detail', recipe_id=latest_recipes[1]['recipe_id']) }}" class="btn btn-sm btn-primary">
+                            View Recipe
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="mt-5 pt-4" data-aos="fade-up" data-aos-delay="400">
+    <h2 class="section-title text-center mb-5">Why Choose DeliciousBytes?</h2>
+    <div class="row g-4">
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+            <div class="text-center p-4">
+                <div class="rounded-circle mx-auto mb-4 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; background-color: rgba(255, 107, 107, 0.1);">
+                    <i class="fas fa-search fa-2x" style="color: var(--primary-color);"></i>
+                </div>
+                <h4>Easy to Search</h4>
+                <p class="text-muted">Quickly find recipes by name, ingredients, or category with our powerful search.</p>
+            </div>
+        </div>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+            <div class="text-center p-4">
+                <div class="rounded-circle mx-auto mb-4 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; background-color: rgba(78, 205, 196, 0.1);">
+                    <i class="fas fa-save fa-2x" style="color: var(--secondary-color);"></i>
+                </div>
+                <h4>Save Your Favorites</h4>
+                <p class="text-muted">Store all your favorite recipes in one place and access them anytime, anywhere.</p>
+            </div>
+        </div>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+            <div class="text-center p-4">
+                <div class="rounded-circle mx-auto mb-4 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; background-color: rgba(255, 209, 102, 0.1);">
+                    <i class="fas fa-share-alt fa-2x" style="color: var(--warning-color);"></i>
+                </div>
+                <h4>Share with Friends</h4>
+                <p class="text-muted">Easily share your culinary creations with friends and family.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="mt-5 pt-3" data-aos="fade-up" data-aos-delay="500">
+    <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="card-body p-0">
+            <div class="row g-0">
+                <div class="col-md-6 p-5 d-flex flex-column justify-content-center">
+                    <h2 class="display-6 fw-bold mb-3">Ready to Share Your Recipe?</h2>
+                    <p class="mb-4">Add your own recipes to the collection and share them with the community.</p>
+                    <div>
+                        <a href="{{ url_for('add_recipe') }}" class="btn btn-lg btn-primary px-4">
+                            <i class="fas fa-plus-circle me-2"></i> Add New Recipe
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-6 position-relative">
+                    <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80" class="w-100 h-100 object-fit-cover" style="min-height: 350px;" alt="Cooking">
+                    <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style="background-color: rgba(0,0,0,0.3);">
+                        <a href="#" class="text-white rounded-circle bg-dark bg-opacity-50 p-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                            <i class="fas fa-play fa-lg"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %} 

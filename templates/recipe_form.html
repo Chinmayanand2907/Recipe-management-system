@@ -1,0 +1,328 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ 'Edit' if edit else 'Add' }} Recipe - DeliciousBytes{% endblock %}
+
+{% block content %}
+<div class="container py-4" data-aos="fade-up">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('index') }}" class="text-primary">Home</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('recipes') }}" class="text-primary">Recipes</a></li>
+            <li class="breadcrumb-item active text-secondary" aria-current="page">{{ 'Edit' if edit else 'Add New' }} Recipe</li>
+        </ol>
+    </nav>
+    
+    <div class="row mb-4">
+        <div class="col-lg-7">
+            <h1 class="section-title text-primary">{{ 'Edit' if edit else 'Add New' }} Recipe</h1>
+            <p class="lead text-secondary">Share your culinary creations with the world! Fill out the form below to {{ 'update' if edit else 'add' }} your recipe.</p>
+        </div>
+        <div class="col-lg-5 text-lg-end">
+            {% if edit %}
+                {% if recipe and recipe.recipe_id %}
+                <a href="{{ url_for('recipe_detail', recipe_id=recipe.recipe_id) }}" class="btn btn-outline-primary">
+                    <i class="fas fa-arrow-left me-2"></i> Back to Recipe
+                </a>
+                {% else %}
+                <a href="{{ url_for('recipes') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-arrow-left me-2"></i> Back to Recipes
+                </a>
+                {% endif %}
+            {% else %}
+            <a href="{{ url_for('recipes') }}" class="btn btn-outline-primary">
+                <i class="fas fa-arrow-left me-2"></i> Back to Recipes
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-lg-8" data-aos="fade-up" data-aos-delay="100">
+            <div class="card border-0 shadow-sm rounded-3 bg-dark bg-opacity-10">
+                <div class="card-body p-4">
+                    <form method="POST" enctype="multipart/form-data" id="recipeForm" class="needs-validation" novalidate>
+                        {{ form.csrf_token }}
+                        
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h4 class="mb-3 text-primary"><i class="fas fa-info-circle me-2 text-primary"></i> Basic Information</h4>
+                                <hr class="border-secondary opacity-25">
+                            </div>
+                            
+                            <div class="col-md-8 mb-3">
+                                <label for="{{ form.title.id }}" class="form-label text-secondary">Recipe Title <span class="text-danger">*</span></label>
+                                {{ form.title(class="form-control form-control-lg bg-dark bg-opacity-10 border-0 text-secondary" + (" is-invalid" if form.title.errors else ""), placeholder="E.g. Homemade Chocolate Chip Cookies") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.title.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.category_id.id }}" class="form-label text-secondary">Category <span class="text-danger">*</span></label>
+                                {{ form.category_id(class="form-select bg-dark bg-opacity-10 border-0 text-secondary" + (" is-invalid" if form.category_id.errors else "")) }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.category_id.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.description.id }}" class="form-label text-secondary">Description <span class="text-danger">*</span></label>
+                                {{ form.description(class="form-control bg-dark bg-opacity-10 border-0 text-secondary" + (" is-invalid" if form.description.errors else ""), rows="3", placeholder="Brief description of your recipe") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.description.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                <small class="text-secondary opacity-75">Provide a brief, appetizing description of your dish.</small>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h4 class="mb-3 text-primary"><i class="fas fa-clock me-2 text-primary"></i> Timing & Details</h4>
+                                <hr class="border-secondary opacity-25">
+                            </div>
+                            
+                            <div class="col-md-3 mb-3">
+                                <label for="{{ form.prep_time.id }}" class="form-label text-secondary">Prep Time (mins) <span class="text-danger">*</span></label>
+                                {{ form.prep_time(class="form-control bg-dark bg-opacity-10 border-0 text-secondary" + (" is-invalid" if form.prep_time.errors else ""), type="number", min="1") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.prep_time.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-3 mb-3">
+                                <label for="{{ form.cook_time.id }}" class="form-label text-secondary">Cook Time (mins) <span class="text-danger">*</span></label>
+                                {{ form.cook_time(class="form-control bg-dark bg-opacity-10 border-0 text-secondary" + (" is-invalid" if form.cook_time.errors else ""), type="number", min="0") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.cook_time.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-3 mb-3">
+                                <label for="{{ form.servings.id }}" class="form-label text-secondary">Servings <span class="text-danger">*</span></label>
+                                {{ form.servings(class="form-control bg-dark bg-opacity-10 border-0 text-secondary" + (" is-invalid" if form.servings.errors else ""), type="number", min="1") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.servings.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-3 mb-3">
+                                <label for="{{ form.difficulty.id }}" class="form-label text-secondary">Difficulty <span class="text-danger">*</span></label>
+                                {{ form.difficulty(class="form-select bg-dark bg-opacity-10 border-0 text-secondary" + (" is-invalid" if form.difficulty.errors else "")) }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.difficulty.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h4 class="mb-3 text-primary"><i class="fas fa-list-ul me-2 text-primary"></i> Ingredients</h4>
+                                <hr class="border-secondary opacity-25">
+                            </div>
+                            
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.ingredients.id }}" class="form-label text-secondary">Ingredients List <span class="text-danger">*</span></label>
+                                {{ form.ingredients(class="form-control bg-dark bg-opacity-10 border-0 text-secondary" + (" is-invalid" if form.ingredients.errors else ""), rows="6", placeholder="Enter each ingredient on a new line. E.g:\n2 cups all-purpose flour\n1/2 cup butter, softened\n1 cup sugar") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.ingredients.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                <small class="text-secondary opacity-75">Enter one ingredient per line, including quantity and unit (e.g., 2 cups flour).</small>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h4 class="mb-3 text-primary"><i class="fas fa-mortar-pestle me-2 text-primary"></i> Instructions</h4>
+                                <hr class="border-secondary opacity-25">
+                            </div>
+                            
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.instructions.id }}" class="form-label text-secondary">Cooking Instructions <span class="text-danger">*</span></label>
+                                {{ form.instructions(class="form-control bg-dark bg-opacity-10 border-0 text-secondary" + (" is-invalid" if form.instructions.errors else ""), rows="8", placeholder="Enter each step on a new line. E.g:\nPreheat oven to 350°F.\nMix the butter and sugar until creamy.\nGradually add flour and mix well.") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.instructions.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                <small class="text-secondary opacity-75">Enter one step per line. Be clear and detailed with each instruction.</small>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h4 class="mb-3 text-primary"><i class="fas fa-camera me-2 text-primary"></i> Recipe Image</h4>
+                                <hr class="border-secondary opacity-25">
+                            </div>
+                            
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.image.id }}" class="form-label text-secondary">Upload Image</label>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text bg-dark bg-opacity-20 border-0"><i class="fas fa-image text-primary"></i></span>
+                                    {{ form.image(class="form-control bg-dark bg-opacity-10 border-0 text-secondary" + (" is-invalid" if form.image.errors else "")) }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.image.errors %}
+                                        {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <small class="text-secondary opacity-75">Optional. Upload an image of your finished dish (JPEG, PNG, GIF).</small>
+                                
+                                {% if edit and recipe.image_url %}
+                                <div class="mt-3">
+                                    <p class="mb-2 text-secondary">Current Image:</p>
+                                    <img src="{{ url_for('static', filename=recipe.image_url) }}" alt="{{ recipe.title }}" class="img-thumbnail" style="max-height: 150px;">
+                                    <div class="form-check mt-2">
+                                        <input class="form-check-input" type="checkbox" id="removeImage" name="remove_image">
+                                        <label class="form-check-label text-secondary" for="removeImage">
+                                            Remove current image
+                                        </label>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h4 class="mb-3 text-primary"><i class="fas fa-lightbulb me-2 text-primary"></i> Additional Information</h4>
+                                <hr class="border-secondary opacity-25">
+                            </div>
+                            
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.notes.id }}" class="form-label text-secondary">Notes & Tips</label>
+                                {{ form.notes(class="form-control bg-dark bg-opacity-10 border-0 text-secondary" + (" is-invalid" if form.notes.errors else ""), rows="3", placeholder="Any additional tips, variations, or notes about the recipe") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.notes.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                <small class="text-secondary opacity-75">Optional. Add any tips, substitutions, or special notes about this recipe.</small>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center mt-4">
+                            <button type="button" class="btn btn-outline-secondary" onclick="resetForm()">
+                                <i class="fas fa-undo me-2"></i> Reset Form
+                            </button>
+                            <button type="submit" class="btn btn-primary btn-lg px-5">
+                                <i class="fas fa-save me-2"></i> {{ 'Save Changes' if edit else 'Add Recipe' }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+            <div class="card border-0 shadow-sm rounded-3 sticky-lg-top bg-dark bg-opacity-10" style="top: 100px;">
+                <div class="card-body p-4">
+                    <h4 class="mb-3 text-primary">Recipe Tips</h4>
+                    
+                    <div class="tip-item mb-3">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0 me-3">
+                                <div class="rounded-circle bg-primary bg-opacity-10 p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                    <i class="fas fa-star text-primary"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <h5 class="fs-6 text-primary">Be Specific</h5>
+                                <p class="small text-secondary mb-0">Precise measurements and clear instructions help others recreate your dish successfully.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tip-item mb-3">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0 me-3">
+                                <div class="rounded-circle bg-primary bg-opacity-10 p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                    <i class="fas fa-camera text-primary"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <h5 class="fs-6 text-primary">Add an Image</h5>
+                                <p class="small text-secondary mb-0">Recipes with images get 5x more views. Show off your culinary creation!</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tip-item mb-3">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0 me-3">
+                                <div class="rounded-circle bg-primary bg-opacity-10 p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                    <i class="fas fa-lightbulb text-primary"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <h5 class="fs-6 text-primary">Include Tips</h5>
+                                <p class="small text-secondary mb-0">Add helpful notes about substitutions, storage or serving suggestions.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tip-item">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0 me-3">
+                                <div class="rounded-circle bg-primary bg-opacity-10 p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                    <i class="fas fa-hourglass-half text-primary"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <h5 class="fs-6 text-primary">Accurate Times</h5>
+                                <p class="small text-secondary mb-0">Provide realistic prep and cooking times to help with meal planning.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr class="my-4 border-secondary opacity-25">
+                    
+                    <div class="text-center">
+                        <div class="mb-3">
+                            <i class="fas fa-question-circle fa-2x text-primary"></i>
+                        </div>
+                        <h5 class="text-primary">Need Help?</h5>
+                        <p class="small text-secondary">Check out our <a href="#" class="text-decoration-none text-primary">recipe guidelines</a> or <a href="#" class="text-decoration-none text-primary">contact support</a> if you have questions.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Form validation
+        const form = document.getElementById('recipeForm');
+        form.addEventListener('submit', function(event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        });
+    });
+    
+    function resetForm() {
+        if (confirm('Are you sure you want to reset the form? All unsaved changes will be lost.')) {
+            document.getElementById('recipeForm').reset();
+            document.getElementById('recipeForm').classList.remove('was-validated');
+        }
+    }
+</script>
+{% endblock %} 

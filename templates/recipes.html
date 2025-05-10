@@ -1,0 +1,279 @@
+{% extends 'base.html' %}
+
+{% block title %}Browse Recipes - DeliciousBytes{% endblock %}
+
+{% block content %}
+<section class="container py-4">
+    <div class="row mb-5" data-aos="fade-up">
+        <div class="col-12">
+            <h1 class="section-title text-primary">Browse Recipes</h1>
+            <p class="lead text-secondary">Discover delicious recipes from our collection or filter by category to find exactly what you're craving.</p>
+        </div>
+    </div>
+    
+    <div class="row g-4 mb-5" data-aos="fade-up" data-aos-delay="100">
+        <!-- Search and Filter Section -->
+        <div class="col-lg-3">
+            <div class="card border-0 shadow-sm rounded-3 p-4 sticky-lg-top bg-dark bg-opacity-10" style="top: 100px; z-index: 100;">
+                <h5 class="mb-4 text-primary"><i class="fas fa-filter me-2"></i> Filter Recipes</h5>
+                
+                <div class="mb-4">
+                    <div class="form-group">
+                        <label for="searchQuery" class="form-label mb-2 text-secondary">Search:</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control bg-dark bg-opacity-10 text-secondary border-0" id="searchQuery" placeholder="Search recipes..." value="{{ request.args.get('q', '') }}">
+                            <button class="btn btn-primary" id="searchButton" type="button">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <h6 class="text-primary">Categories</h6>
+                    <div class="mt-3">
+                        <a href="{{ url_for('recipes') }}" class="d-block mb-2 text-decoration-none text-secondary {{ 'fw-bold text-primary' if not request.args.get('category') else '' }}">
+                            <i class="fas fa-circle-dot me-2 {{ 'text-primary' if not request.args.get('category') else 'text-secondary' }}"></i>
+                            All Categories
+                        </a>
+                        {% for category in categories %}
+                        <a href="{{ url_for('recipes', category=category['category_id']) }}" class="d-block mb-2 text-decoration-none text-secondary {{ 'fw-bold text-primary' if request.args.get('category')|int == category['category_id'] else '' }}">
+                            <i class="fas fa-circle-dot me-2 {{ 'text-primary' if request.args.get('category')|int == category['category_id'] else 'text-secondary' }}"></i>
+                            {{ category['name'] }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <h6 class="text-primary">Difficulty</h6>
+                    <div class="mt-3">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="difficultyEasy">
+                            <label class="form-check-label text-secondary" for="difficultyEasy">
+                                Easy
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="difficultyMedium">
+                            <label class="form-check-label text-secondary" for="difficultyMedium">
+                                Medium
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="difficultyHard">
+                            <label class="form-check-label text-secondary" for="difficultyHard">
+                                Hard
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <h6 class="text-primary">Preparation Time</h6>
+                    <div class="mt-3">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="prepTime15">
+                            <label class="form-check-label text-secondary" for="prepTime15">
+                                Under 15 minutes
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="prepTime30">
+                            <label class="form-check-label text-secondary" for="prepTime30">
+                                15-30 minutes
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="prepTime60">
+                            <label class="form-check-label text-secondary" for="prepTime60">
+                                Over 30 minutes
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn btn-outline-primary w-100">
+                    <i class="fas fa-sliders me-2"></i> Apply Filters
+                </button>
+            </div>
+        </div>
+        
+        <!-- Recipes Grid -->
+        <div class="col-lg-9">
+            {% if category_name %}
+            <div class="d-flex align-items-center mb-4">
+                <h4 class="mb-0 text-primary">{{ category_name }}</h4>
+                <a href="{{ url_for('recipes') }}" class="btn btn-sm btn-outline-secondary ms-3">
+                    <i class="fas fa-times me-1"></i> Clear Filter
+                </a>
+            </div>
+            {% endif %}
+            
+            {% if search_query %}
+            <div class="alert bg-dark bg-opacity-10 border-0 d-flex align-items-center">
+                <i class="fas fa-search me-2 text-primary"></i>
+                <div class="text-secondary">Showing results for: <strong class="text-primary">{{ search_query }}</strong></div>
+                <a href="{{ url_for('recipes') }}" class="btn btn-sm btn-outline-secondary ms-auto">
+                    <i class="fas fa-times me-1"></i> Clear Search
+                </a>
+            </div>
+            {% endif %}
+            
+            {% if not recipes %}
+            <div class="text-center py-5" data-aos="fade-up">
+                <div class="mb-4">
+                    <i class="fas fa-search fa-3x text-primary"></i>
+                </div>
+                <h3 class="text-primary">No Recipes Found</h3>
+                <p class="text-secondary">We couldn't find any recipes matching your criteria.</p>
+                <a href="{{ url_for('recipes') }}" class="btn btn-primary mt-3">
+                    <i class="fas fa-redo me-2"></i> View All Recipes
+                </a>
+            </div>
+            {% else %}
+            <!-- Recipe Sorting Options -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <span class="text-secondary">{{ recipes|length }} recipes found</span>
+                </div>
+                <div class="d-flex align-items-center">
+                    <label for="sortOrder" class="me-2 text-nowrap text-secondary">Sort by:</label>
+                    <select class="form-select form-select-sm bg-dark bg-opacity-10 border-0 text-secondary" id="sortOrder" style="width: auto;">
+                        <option>Newest First</option>
+                        <option>Oldest First</option>
+                        <option>A-Z</option>
+                        <option>Preparation Time</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="row g-4">
+                {% for recipe in recipes %}
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ loop.index * 50 }}">
+                    <div class="card h-100 recipe-card bg-dark bg-opacity-10 border-0">
+                        {% set image_url = recipe.image_url if recipe.image_url is defined else recipe['image_url'] if recipe['image_url'] is defined else none %}
+                        {% if image_url %}
+                        <img src="{{ url_for('static', filename=image_url) }}" class="card-img-top" alt="{{ recipe.title|default(recipe['title']|default('Recipe')) }}">
+                        {% else %}
+                        <div class="card-img-top d-flex align-items-center justify-content-center bg-dark bg-opacity-20" style="height: 200px;">
+                            <i class="fas fa-utensils fa-3x text-primary"></i>
+                        </div>
+                        {% endif %}
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                {% set category = recipe.category if recipe.category is defined else recipe['category'] if recipe['category'] is defined else 'Uncategorized' %}
+                                <span class="badge bg-primary bg-opacity-75">{{ category }}</span>
+                                
+                                {% set difficulty = recipe.difficulty if recipe.difficulty is defined else recipe['difficulty'] if recipe['difficulty'] is defined else 'Medium' %}
+                                <span class="badge bg-secondary bg-opacity-75">{{ difficulty }}</span>
+                            </div>
+                            
+                            {% set title = recipe.title if recipe.title is defined else recipe['title'] if recipe['title'] is defined else 'Untitled Recipe' %}
+                            <h5 class="card-title text-primary">{{ title }}</h5>
+                            
+                            {% set description = recipe.description if recipe.description is defined else recipe['description'] if recipe['description'] is defined else 'No description available' %}
+                            <p class="card-text text-secondary">{{ description|truncate(100) }}</p>
+                        </div>
+                        <div class="card-footer bg-transparent border-0 d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <i class="far fa-clock me-1 text-primary"></i>
+                                {% set prep_time = recipe.prep_time if recipe.prep_time is defined else recipe['prep_time'] if recipe['prep_time'] is defined else 0 %}
+                                {% set cook_time = recipe.cook_time if recipe.cook_time is defined else recipe['cook_time'] if recipe['cook_time'] is defined else 0 %}
+                                <span class="text-secondary small">{{ prep_time|int + cook_time|int }} mins</span>
+                            </div>
+                            
+                            {% set recipe_id = recipe.recipe_id if recipe.recipe_id is defined else recipe['recipe_id'] if recipe['recipe_id'] is defined else 1 %}
+                            <a href="{{ url_for('recipe_detail', recipe_id=recipe_id) }}" class="btn btn-sm btn-primary">
+                                View Recipe
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Pagination -->
+            <nav class="mt-5">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item disabled">
+                        <a class="page-link bg-dark bg-opacity-10 border-0 text-secondary" href="#" tabindex="-1" aria-disabled="true">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item active"><a class="page-link bg-primary border-0" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link bg-dark bg-opacity-10 border-0 text-secondary" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link bg-dark bg-opacity-10 border-0 text-secondary" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link bg-dark bg-opacity-10 border-0 text-secondary" href="#">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Recipe of the Week Section -->
+<section class="bg-dark bg-opacity-10 py-5 mt-5" data-aos="fade-up" data-aos-delay="300">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <h2 class="section-title text-primary">Recipe of the Week</h2>
+                <h3 class="mb-3 text-secondary">Delicious Homemade Pizza</h3>
+                <p class="mb-4 text-secondary">Make perfect homemade pizza with this foolproof recipe. A crispy crust topped with tangy sauce, melted cheese, and your favorite toppings – ready in just 30 minutes!</p>
+                <div class="d-flex mb-4">
+                    <div class="recipe-meta-item me-4">
+                        <i class="fas fa-clock text-primary"></i>
+                        <span class="ms-2 text-secondary">30 mins</span>
+                    </div>
+                    <div class="recipe-meta-item me-4">
+                        <i class="fas fa-signal text-primary"></i>
+                        <span class="ms-2 text-secondary">Medium</span>
+                    </div>
+                    <div class="recipe-meta-item">
+                        <i class="fas fa-users text-primary"></i>
+                        <span class="ms-2 text-secondary">Serves 4</span>
+                    </div>
+                </div>
+                <a href="#" class="btn btn-primary">
+                    <i class="fas fa-utensils me-2"></i> View Recipe
+                </a>
+            </div>
+            <div class="col-lg-6">
+                <div class="position-relative">
+                    <div class="img-container rounded-3 overflow-hidden shadow">
+                        <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=1000&q=80" class="w-100" alt="Pizza" style="height: 400px; object-fit: cover;">
+                    </div>
+                    <div class="position-absolute top-0 end-0 bg-warning text-dark rounded-circle p-3 m-3 shadow" style="transform: rotate(15deg);">
+                        <div class="fw-bold">Editor's<br>Choice</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle search
+        const searchButton = document.getElementById('searchButton');
+        const searchInput = document.getElementById('searchQuery');
+        
+        searchButton.addEventListener('click', function() {
+            const query = searchInput.value.trim();
+            if (query) {
+                window.location.href = "{{ url_for('recipes') }}?q=" + encodeURIComponent(query);
+            }
+        });
+        
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchButton.click();
+            }
+        });
+    });
+</script>
+{% endblock %} 
